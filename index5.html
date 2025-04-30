@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Playground</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        section {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1, h2 {
+            color: #2c3e50;
+        }
+        
+        /* Event Handling Styles */
+        .click-counter {
+            padding: 10px 20px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .click-counter:hover {
+            transform: scale(1.05);
+        }
+        
+        .hover-box {
+            width: 100px;
+            height: 100px;
+            background: #e74c3c;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .hover-box:hover {
+            background: #9b59b6;
+            transform: rotate(10deg) scale(1.1);
+            border-radius: 20px;
+        }
+        
+        .keypress-display {
+            padding: 15px;
+            background: #2ecc71;
+            color: white;
+            min-height: 20px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        
+        /* Interactive Elements Styles */
+        .color-changer {
+            padding: 10px 20px;
+            background: #f1c40f;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        .slideshow {
+            position: relative;
+            height: 300px;
+            margin: 20px 0;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+        
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        
+        .slide.active {
+            opacity: 1;
+        }
+        
+        .slide-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .slide-btn {
+            padding: 5px 15px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .accordion {
+            margin: 20px 0;
+        }
+        
+        .accordion-header {
+            padding: 15px;
+            background: #3498db;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-bottom: 5px;
+            transition: background 0.3s;
+        }
+        
+        .accordion-header:hover {
+            background: #2980b9;
+        }
+        
+        .accordion-content {
+            padding: 15px;
+            background: #ecf0f1;
+            border-radius: 0 0 5px 5px;
+            display: none;
+        }
+        
+        .bouncing-ball {
+            width: 50px;
+            height: 50px;
+            background: #e74c3c;
+            border-radius: 50%;
+            position: relative;
+            margin: 30px auto;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-50px); }
+        }
+        
+        /* Form Validation Styles */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success {
+            color: #2ecc71;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .password-strength {
+            height: 5px;
+            background: #ddd;
+            margin-top: 5px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .strength-meter {
+            height: 100%;
+            width: 0;
+            background: #e74c3c;
+            transition: width 0.3s, background 0.3s;
+        }
+        
+        button[type="submit"] {
+            padding: 10px 20px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        button[type="submit"]:hover {
+            background: #27ae60;
+        }
+        
+        /* Secret Message */
+        .secret-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="main-header">Interactive Web Playground</h1>
+    
+    <!-- Secret Message (hidden by default) -->
+    <div class="secret-message">
+        <h2>You found the secret!</h2>
+        <p>🎉 Congratulations! You're now an honorary member of the Double-Click Club! 🎉</p>
+        <button id="close-secret">Close</button>
+    </div>
+    
+    <!-- Event Handling Section -->
+    <section id="event-handling">
+        <h2>Event Handling 🎈</h2>
+        
+        <h3>Button Click</h3>
+        <button id="click-counter" class="click-counter">Click Me! (0 clicks)</button>
+        
+        <h3>Hover Effects</h3>
+        <div class="hover-box">Hover Me!</div>
+        
+        <h3>Keypress Detection</h3>
+        <p>Press any key to see it displayed below:</p>
+        <div id="keypress-display" class="keypress-display">Waiting for keypress...</div>
+    </section>
+    
+    <!-- Interactive Elements Section -->
+    <section id="interactive-elements">
+        <h2>Interactive Elements 🎮</h2>
+        
+        <h3>Color Changing Button</h3>
+        <button id="color-changer" class="color-changer">Change My Color!</button>
+        
+        <h3>Image Slideshow</h3>
+        <div class="slideshow">
+            <img src="https://placehold.co/800x300/3498db/white?text=Nature" class="slide active" alt="Nature">
+            <img src="https://placehold.co/800x300/e74c3c/white?text=City" class="slide" alt="City">
+            <img src="https://placehold.co/800x300/2ecc71/white?text=Animals" class="slide" alt="Animal">
+            <img src="https://placehold.co/800x300/f1c40f/black?text=Food" class="slide" alt="Food">
+        </div>
+        <div class="slide-nav">
+            <button class="slide-btn" data-index="0">1</button>
+            <button class="slide-btn" data-index="1">2</button>
+            <button class="slide-btn" data-index="2">3</button>
+            <button class="slide-btn" data-index="3">4</button>
+        </div>
+        
+        <h3>Accordion FAQ</h3>
+        <div class="accordion">
+            <div class="accordion-header">What is this project about?</div>
+            <div class="accordion-content">
+                <p>This is an interactive playground demonstrating various web development techniques including event handling, interactive elements, and form validation.</p>
+            </div>
+            
+            <div class="accordion-header">Who can use this?</div>
+            <div class="accordion-content">
+                <p>Anyone learning web development can use this as a reference for implementing common interactive features.</p>
+            </div>
+            
+            <div class="accordion-header">Are there any hidden features?</div>
+            <div class="accordion-content">
+                <p>Maybe... try double-clicking the page header! 🤫</p>
+            </div>
+        </div>
+        
+        <h3>Animations</h3>
+        <div class="bouncing-ball"></div>
+        <button id="toggle-animation">Pause Animation</button>
+    </section>
+    
+    <!-- Form Validation Section -->
+    <section id="form-validation">
+        <h2>Form Validation 📋✅</h2>
+        
+        <form id="signup-form">
+            <div class="form-group">
+                <label for="username">Username*</label>
+                <input type="text" id="username" placeholder="Enter your username">
+                <div class="error" id="username-error">Username is required</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email*</label>
+                <input type="text" id="email" placeholder="Enter your email">
+                <div class="error" id="email-error">Please enter a valid email</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password*</label>
+                <input type="password" id="password" placeholder="Enter your password">
+                <div class="error" id="password-error">Password must be at least 8 characters</div>
+                <div class="password-strength">
+                    <div class="strength-meter" id="strength-meter"></div>
+                </div>
+                <div class="success" id="password-success">Password strength: <span id="strength-text">Weak</span></div>
+            </div>
+            
+            <button type="submit">Sign Up</button>
+        </form>
+    </section>
+    
+    <script>
+        // Event Handling Section
+        // Click Counter
+        let clickCount = 0;
+        const clickCounterBtn = document.getElementById('click-counter');
+        
+        clickCounterBtn.addEventListener('click', () => {
+            clickCount++;
+            clickCounterBtn.textContent = `Click Me! (${clickCount} clicks)`;
+            
+            // Bonus: Change color every 5 clicks
+            if (clickCount % 5 === 0) {
+                const colors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', '#f1c40f'];
+                clickCounterBtn.style.backgroundColor = colors[(clickCount/5) % colors.length];
+            }
+        });
+        
+        // Keypress Detection
+        document.addEventListener('keydown', (e) => {
+            const keyDisplay = document.getElementById('keypress-display');
+            keyDisplay.textContent = `You pressed: ${e.key} (Key code: ${e.keyCode})`;
+            
+            // Change color based on key type
+            if (e.key >= '0' && e.key <= '9') {
+                keyDisplay.style.backgroundColor = '#2ecc71'; // Green for numbers
+            } else if (e.key >= 'a' && e.key <= 'z') {
+                keyDisplay.style.backgroundColor = '#3498db'; // Blue for letters
+            } else {
+                keyDisplay.style.backgroundColor = '#e74c3c'; // Red for others
+            }
+        });
+        
+        // Secret Action (Double click header)
+        const header = document.getElementById('main-header');
+        const secretMessage = document.querySelector('.secret-message');
+        const closeSecret = document.getElementById('close-secret');
+        
+        header.addEventListener('dblclick', () => {
+            secretMessage.style.display = 'block';
+        });
+        
+        closeSecret.addEventListener('click', () => {
+            secretMessage.style.display = 'none';
+        });
+        
+        // Bonus: Long press detection
+        let pressTimer;
+        header.addEventListener('mousedown', () => {
+            pressTimer = setTimeout(() => {
+                secretMessage.style.display = 'block';
+            }, 1000); // 1 second long press
+        });
+        
+        header.addEventListener('mouseup', () => {
+            clearTimeout(pressTimer);
+        });
+        
+        header.addEventListener('mouseleave', () => {
+            clearTimeout(pressTimer);
+        });
+        
+        // Interactive Elements Section
+        // Color Changing Button
+        const colorChanger = document.getElementById('color-changer');
+        const colors = ['#f1c40f', '#e74c3c', '#3498db', '#2ecc71', '#9b59b6'];
+        let colorIndex = 0;
+        
+        colorChanger.addEventListener('click', () => {
+            colorIndex = (colorIndex + 1) % colors.length;
+            colorChanger.style.backgroundColor = colors[colorIndex];
+            colorChanger.textContent = `Color Changed! (${colorIndex + 1}/${colors.length})`;
+        });
+        
+        // Image Slideshow
+        const slides = document.querySelectorAll('.slide');
+        const slideButtons = document.querySelectorAll('.slide-btn');
+        let currentSlide = 0;
+        let slideInterval = setInterval(nextSlide, 3000); // Auto-advance every 3 seconds
+        
+        function showSlide(index) {
+            slides.forEach(slide => slide.classList.remove('active'));
+            slideButtons.forEach(btn => btn.style.backgroundColor = '#3498db');
+            
+            slides[index].classList.add('active');
+            slideButtons[index].style.backgroundColor = '#2980b9';
+            currentSlide = index;
+        }
+        
+        function nextSlide() {
+            showSlide((currentSlide + 1) % slides.length);
+        }
+        
+        slideButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                clearInterval(slideInterval);
+                showSlide(parseInt(button.dataset.index));
+                slideInterval = setInterval(nextSlide, 3000); // Restart auto-advance
+            });
+        });
+        
+        // Accordion
+        const accordionHeaders = document.querySelectorAll('.accordion-header');
+        
+        accordionHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const isOpen = content.style.display === 'block';
+                
+                // Close all first
+                document.querySelectorAll('.accordion-content').forEach(item => {
+                    item.style.display = 'none';
+                });
+                
+                // Open current if it was closed
+                if (!isOpen) {
+                    content.style.display = 'block';
+                }
+            });
+        });
+        
+        // Toggle Animation
+        const toggleBtn = document.getElementById('toggle-animation');
+        const ball = document.querySelector('.bouncing-ball');
+        let isAnimating = true;
+        
+        toggleBtn.addEventListener('click', () => {
+            isAnimating = !isAnimating;
+            
+            if (isAnimating) {
+                ball.style.animationPlayState = 'running';
+                toggleBtn.textContent = 'Pause Animation';
+            } else {
+                ball.style.animationPlayState = 'paused';
+                toggleBtn.textContent = 'Play Animation';
+            }
+        });
+        
+        // Form Validation Section
+        const form = document.getElementById('signup-form');
+        const username = document.getElementById('username');
+        const email = document.getElementById('email');
+        const password = document.getElementById('password');
+        const usernameError = document.getElementById('username-error');
+        const emailError = document.getElementById('email-error');
+        const passwordError = document.getElementById('password-error');
+        const passwordSuccess = document.getElementById('password-success');
+        const strengthMeter = document.getElementById('strength-meter');
+        const strengthText = document.getElementById('strength-text');
+        
+        // Real-time validation
+        username.addEventListener('input', () => {
+            if (username.value.trim() === '') {
+                usernameError.style.display = 'block';
+            } else {
+                usernameError.style.display = 'none';
+            }
+        });
+        
+        email.addEventListener('input', () => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (!emailRegex.test(email.value)) {
+                emailError.style.display = 'block';
+            } else {
+                emailError.style.display = 'none';
+            }
+        });
+        
+        password.addEventListener('input', () => {
+            // Check length
+            if (password.value.length < 8) {
+                passwordError.style.display = 'block';
+                passwordSuccess.style.display = 'none';
+            } else {
+                passwordError.style.display = 'none';
+                passwordSuccess.style.display = 'block';
+                
+                // Calculate strength
+                let strength = 0;
+                if (password.value.length >= 8) strength += 1;
+                if (password.value.length >= 12) strength += 1;
+                if (/[A-Z]/.test(password.value)) strength += 1;
+                if (/[0-9]/.test(password.value)) strength += 1;
+                if (/[^A-Za-z0-9]/.test(password.value)) strength += 1;
+                
+                // Update meter
+                const width = (strength / 5) * 100;
+                strengthMeter.style.width = `${width}%`;
+                
+                // Update color and text
+                let color, text;
+                if (strength <= 2) {
+                    color = '#e74c3c'; // Red
+                    text = 'Weak';
+                } else if (strength <= 3) {
+                    color = '#f39c12'; // Orange
+                    text = 'Medium';
+                } else {
+                    color = '#2ecc71'; // Green
+                    text = 'Strong';
+                }
+                
+                strengthMeter.style.backgroundColor = color;
+                strengthText.textContent = text;
+            }
+        });
+        
+        // Form submission
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Validate all fields
+            let isValid = true;
+            
+            if (username.value.trim() === '') {
+                usernameError.style.display = 'block';
+                isValid = false;
+            }
+            
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email.value)) {
+                emailError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (password.value.length < 8) {
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isValid) {
+                alert('Form submitted successfully!');
+                form.reset();
+                strengthMeter.style.width = '0';
+                passwordSuccess.style.display = 'none';
+            } else {
+                alert('Please fix the errors in the form.');
+            }
+        });
+    </script>
+</body>
+</html>
